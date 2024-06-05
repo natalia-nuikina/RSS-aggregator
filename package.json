@@ -1,6 +1,7 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
+  "homepage": "https://github.com/natalia-nuikina/frontend-project-11",
   "description": "RSS-reader",
   "main": "index.js",
   "scripts": {
