@@ -30,30 +30,31 @@ const config = {
     ],
     module: {
         rules: [
-            {
-              test: /\.js$/,
-              exclude: /node_modules/,
-              use: {
-                loader: 'babel-loader',
-                options: {
-                  presets: ['@babel/preset-env'],
-                },
+          {
+            test: /\.(scss)$/,
+            use: [
+              {
+                loader: 'style-loader'
               },
-            },
-            { test: /\.css$/, use: ['style-loader', 'css-loader', 'postcss-loader'] },
-            {
-              test: /\.scss$/,
-              use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader'],
-            },
-            {
-              test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-              use: 'url-loader?limit=10000',
-            },
-            {
-              test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
-              use: 'file-loader',
-            },
-          ],
+              {
+                loader: 'css-loader'
+              },
+              {
+                loader: 'postcss-loader',
+                options: {
+                  postcssOptions: {
+                    plugins: () => [
+                      require('autoprefixer')
+                    ]
+                  }
+                }
+              },
+              {
+                loader: 'sass-loader'
+              }
+            ]
+          }
+        ],
     },
 };
 
