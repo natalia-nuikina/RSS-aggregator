@@ -1,0 +1,29 @@
+name: test-and-linter
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Клонируем репозиторий
+      - uses: actions/checkout@v4
+      # Устанавливаем Node.js
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      # Ставим зависимости
+      - run: npm install
+      # Запускаем линтер
+      - name: run lint
+        run: make lint
+      - name: run tests
+        run: make test
+      - name: Test & publish code coverage
+        # Publish code coverage on Code Climate
+        # https://github.com/paambaati/codeclimate-action
+        uses: paambaati/codeclimate-action@v5.0.0
+        # Add Code Climate secret key
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.Hexlet11 }}
+        with:
+          coverageCommand: make test-coverage
+          debug: true
