@@ -7,7 +7,15 @@
     </head>
     <body>
         <div class="container py-4 px-3 mx-auto">
-            <h1>Hello, Bootstrap and Webpack!</h1>
+            <h1>RSS агрегатор</h1>
+            <h3 class="mb-5">Начните читать RSS сегодня! Это легко, это красиво.</h3>
+            <form id="form" class="col col-sm-8 col-md-5 col-lg-3" >
+                <div class="mb-3">
+                <!-- <label class="form-label" for="username">Имя пользователя</label> -->
+                <input class="form-control" id="username" type="text" name="username">
+                <div class="invalid-feedback" id="error-username"></div>
+                </div>
+            </form>
             <button class="btn btn-primary">Primary button</button>
         </div>
         <script src="./src/index.js"></script>
