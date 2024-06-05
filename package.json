@@ -4,6 +4,7 @@
   "homepage": "https://github.com/natalia-nuikina/frontend-project-11",
   "description": "RSS-reader",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "webpack serve --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
