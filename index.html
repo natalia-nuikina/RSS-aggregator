@@ -18,22 +18,7 @@
             </form>
             <button class="btn btn-primary">Primary button</button>
         </div>
-        <script src="./src/index.js"></script>
+        <!-- <script src="./src/index.js"></script> -->
         </body>
     </body>
-    
-    <script>
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker
-                    .register("service-worker.js")
-                    .then((registration) => {
-                        console.log("Service Worker registered: ", registration);
-                    })
-                    .catch((registrationError) => {
-                        console.error("Service Worker registration failed: ", registrationError);
-                    });
-            });
-        }
-    </script>
 </html>
