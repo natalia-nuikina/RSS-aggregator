@@ -1,18 +1,17 @@
-'use strict'
 
-const path = require('path');
-const autoprefixer = require('autoprefixer')
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
+import path from 'path';
+import autoprefixer from 'autoprefixer';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const isProduction = process.env.NODE_ENV == 'production';
-
-module.exports = {
+export const module = {
   mode: 'development',
   entry: './src/index.js',
   output: {
     filename: 'index.js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist'),
   },
   devServer: {
     static: path.resolve(__dirname, 'dist'),
@@ -59,15 +58,4 @@ module.exports = {
   }
 }
 
-module.exports = () => {
-    if (isProduction) {
-      module.exports.mode = 'production';
-        
-        
-      module.exports.plugins.push(new WorkboxWebpackPlugin.GenerateSW());
-        
-    } else {
-      module.exports.mode = 'development';
-    }
-    return module.exports;
-};
+export default module;
