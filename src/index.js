@@ -1,4 +1,4 @@
 import  './styles.scss'; 
 import 'bootstrap';
 
-console.log("Hello World!jk");
+console.log("Hello World!");
