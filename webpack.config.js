@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 export const module = {
   mode: 'development',
-  entry: './src/index.js',
+  entry: './index.js',
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'dist'),
