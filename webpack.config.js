@@ -1,75 +1,73 @@
-// Generated using webpack-cli https://github.com/webpack/webpack-cli
+'use strict'
 
 const path = require('path');
+const autoprefixer = require('autoprefixer')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 
 const isProduction = process.env.NODE_ENV == 'production';
 
-
-const config = {
-    entry: './src/index.js',
-    output: {
-        filename: 'index.js',
-        path: path.resolve(__dirname, 'dist'),
-    },
-    devServer: {
-        static: path.resolve(__dirname, 'dist'),
-        port: 8080,
-        hot: true,
-        open: true,
-        host: 'localhost',
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: 'index.html',
-        }),
-
-        // Add your plugins here
-        // Learn more about plugins from https://webpack.js.org/configuration/plugins/
-    ],
-    module: {
-        rules: [
+module.exports = {
+  mode: 'development',
+  entry: './src/index.js',
+  output: {
+    filename: 'index.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  devServer: {
+    static: path.resolve(__dirname, 'dist'),
+    port: 8080,
+    hot: true,
+    open: true,
+    host: 'localhost',
+  },
+  plugins: [
+    new HtmlWebpackPlugin({ template: './index.html' }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.(scss)$/,
+        use: [
           {
-            test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
-            type: 'asset',
-          },
-          // {
-          //   test: /\.js$/,
-          //   exclude: /node_modules/,
-          //   use: {
-          //     loader: 'babel-loader',
-          //     options: {
-          //       presets: ['@babel/preset-env'],
-          //     },
-          //   },
-          // },
-          { test: /\.css$/, use: ['style-loader', 'css-loader', 'postcss-loader'] },
-          {
-            test: /\.scss$/,
-            use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader'],
+            // Adds CSS to the DOM by injecting a `<style>` tag
+            loader: 'style-loader'
           },
           {
-            test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-            use: 'url-loader?limit=10000',
+            // Interprets `@import` and `url()` like `import/require()` and will resolve them
+            loader: 'css-loader'
           },
           {
-            test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
-            use: 'file-loader',
+            // Loader for webpack to process CSS with PostCSS
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: () => [
+                  autoprefixer
+                ]
+              }
+            }
           },
-        ],
-    },
-};
+          {
+            // Loads a SASS/SCSS file and compiles it to CSS
+            loader: 'sass-loader'
+          },
+          
+        ]
+      }
+    ]
+  }
+}
 
 module.exports = () => {
     if (isProduction) {
-        config.mode = 'production';
+      module.exports.mode = 'production';
         
         
-        config.plugins.push(new WorkboxWebpackPlugin.GenerateSW());
+      module.exports.plugins.push(new WorkboxWebpackPlugin.GenerateSW());
         
     } else {
-        config.mode = 'development';
+      module.exports.mode = 'development';
     }
-    return config;
+    return module.exports;
 };
