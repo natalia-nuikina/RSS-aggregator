@@ -1,5 +1,4 @@
 import  './styles.scss'; 
-import * as bootstrap from '../node_modules/bootstrap';
-// import  '../node_modules/bootstrap';
+import * as bootstrap from 'bootstrap'
 
 console.log("Hello World!");
