@@ -4,14 +4,12 @@ import watch from './view.js';
 import resources from './ru.js';
 
 export default () => {
-  // const i18nextInstance = i18next.createInstance();
   i18next.init({
     lng: 'ru',
     debug: false,
     resources,
-  })
-  .then(() => console.log(i18next.t('translation.title')))
-  // console.log(i18nextInstance.t('title'));
+  });
+
   const elements = {
     form: document.querySelector('form'),
     input: document.querySelector('input'),
@@ -48,7 +46,7 @@ export default () => {
       watchedState.form.status = 'finished';
       watchedState.form.error = null;
       if (state.form.watchUrl.includes(url)) {
-        watchedState.form.error = ['add new url'];
+        watchedState.form.error = ['duplicate'];
         watchedState.form.valid = false;
         // watchedState.form.status = 'failed';
       } else {
@@ -57,7 +55,7 @@ export default () => {
       }
     })
     .catch ((err) => {
-      watchedState.form.error = err.errors;
+      watchedState.form.error = err.type;
       watchedState.form.valid = false;
       // watchedState.form.status = 'failed';
     })
