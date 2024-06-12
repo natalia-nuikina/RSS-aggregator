@@ -1,7 +1,13 @@
 import * as yup from 'yup';
 import i18next from 'i18next';
+import axios from 'axios';
 import watch from './view.js';
+import { uniqueId } from 'lodash';
 import resources from './ru.js';
+import { makeUrl } from './helpers.js';
+import parser from './parser.js';
+
+
 
 export default () => {
   i18next.init({
@@ -18,7 +24,7 @@ export default () => {
 
   const state = {
     form: {
-      status: 'filling',
+      status: 'filling', //sending, finished, failed
       valid: true,
       error: null,
       field: {
@@ -34,6 +40,43 @@ export default () => {
 
   const watchedState = watch(elements, i18next, state);
 
+  const getFeedAndPosts = (url) => {
+    axios.get(makeUrl(url))
+    .then(response => {
+      const document = parser(response.data.contents);
+      const feedText = document.querySelector('channel > title').textContent;
+      const feedDescription = document.querySelector('channel > description').textContent;
+      const feedId = uniqueId();
+      const feed = { 
+        id: feedId,
+        text: feedText,
+        description: feedDescription
+      };
+      const postsArr = Array.from(document.querySelectorAll('item'))
+      const posts = postsArr.map((post) => {
+        const postText = post.querySelector('title').textContent;
+        const postDescription = post.querySelector('description').textContent;
+        const postLink = post.querySelector('link').textContent;
+        const postId = uniqueId();
+        return {
+          id: postId,
+          text: postText,
+          description: postDescription,
+          link: postLink,
+          feedId
+        };
+      });
+      watchedState.form.status = 'finished';
+      watchedState.feed = feed;
+      watchedState.posts = posts;
+      console.log(watchedState)
+    })
+    .catch((err) => {
+      watchedState.form.error = err.message;
+      watchedState.form.status = 'failed';
+    });
+  }
+
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     watchedState.form.status = 'sending';
@@ -43,21 +86,21 @@ export default () => {
     schema.validate(state.form.field)
     .then(() => {
       watchedState.form.valid = true;
-      watchedState.form.status = 'finished';
+      
       watchedState.form.error = null;
       if (state.form.watchUrl.includes(url)) {
-        watchedState.form.error = ['duplicate'];
+        watchedState.form.error = 'duplicate';
         watchedState.form.valid = false;
-        // watchedState.form.status = 'failed';
+        watchedState.form.status = 'failed';
       } else {
         watchedState.form.watchUrl.push(url);
-        // watchedState.form.status = 'failed';
+        getFeedAndPosts(url);
       }
     })
     .catch ((err) => {
       watchedState.form.error = err.type;
       watchedState.form.valid = false;
-      // watchedState.form.status = 'failed';
+      watchedState.form.status = 'failed';
     })
     watch(elements, i18next, watchedState);
   });

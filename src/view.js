@@ -7,20 +7,28 @@ export default (elements, i18n, state) => {
   };
 
   const renderFeedback = (elements, i18n, state) => {
-    if (state.form.error) {
-      elements.feedback.textContent = (state.form.error.includes('url')) ? i18n.t('feedbacks.errors.invalid') : i18n.t('feedbacks.errors.duplicate');
       elements.feedback.classList.add('text-danger')
-    } else {
-      elements.feedback.textContent = i18n.t('feedbacks.valid');
-      elements.feedback.style.color = 'green';
-      elements.feedback.classList.remove('text-danger')
-    }
-  }
+      switch (state.form.error) {
+        case 'url':
+          elements.feedback.textContent = i18n.t('feedbacks.errors.invalid');
+          break;
+        case 'duplicate':
+          elements.feedback.textContent =  i18n.t('feedbacks.errors.duplicate');
+          break;
+        case 'invalidRss':
+          elements.feedback.textContent =  i18n.t('feedbacks.errors.invalidRss');
+          break;
+        default:
+          elements.feedback.textContent = i18n.t('feedbacks.valid');
+          elements.feedback.style.color = 'green';
+          elements.feedback.classList.remove('text-danger');
+          break;
+      }
+    } 
 
   const renderStatus = (elements, current) => {
     switch (current) {
       case 'finished':
-        renderFeedback(elements, i18n, watchedState);
         elements.input.value = '';
         elements.input.focus();
         break;
