@@ -15,8 +15,8 @@ jobs:
       # Запускаем линтер
       - name: run lint
         run: make lint
-      - name: run tests
-        run: make test
+      # - name: run tests
+      #   run: make test
       - name: Test & publish code coverage
         # Publish code coverage on Code Climate
         # https://github.com/paambaati/codeclimate-action
