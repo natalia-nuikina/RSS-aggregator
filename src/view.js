@@ -1,7 +1,7 @@
 import onChange from 'on-change';
 
 export default (elements, i18n, state) => {
-  // console.log(state);
+  console.log(state);
   const renderValid = (elements, value) => {
     value ? elements.input.classList.remove('is-invalid') : elements.input.classList.add('is-invalid');
   };
