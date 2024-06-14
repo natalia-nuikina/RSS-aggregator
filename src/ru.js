@@ -3,12 +3,15 @@ export default {
     translation: {
       feedbacks: {
         valid: 'RSS успешно загружен',
-      errors: {
-        invalid: 'Ссылка должна быть валидным URL',
-        duplicate: 'RSS уже существует',
-        invalidRss: 'Ресурс не содержит валидный RSS',
+        errors: {
+          invalid: 'Ссылка должна быть валидным URL',
+          duplicate: 'RSS уже существует',
+          invalidRss: 'Ресурс не содержит валидный RSS',
+        },
       },
-    }
+      feeds: 'Фиды',
+      posts: 'Посты',
+      button: 'Просмотр'
     }
   }
 }

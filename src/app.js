@@ -20,6 +20,8 @@ export default () => {
     form: document.querySelector('form'),
     input: document.querySelector('input'),
     feedback: document.querySelector('.feedback'),
+    feeds: document.querySelector('.feeds'),
+    posts: document.querySelector('.posts'),
   };
 
   const state = {
