@@ -1,5 +1,5 @@
 import onChange from 'on-change';
-import 'bootstrap';
+import { Modal } from 'bootstrap'
 
 export default (elements, i18n, state) => {
   console.log(state);
@@ -80,40 +80,42 @@ export default (elements, i18n, state) => {
     ul.classList.add('list-group', 'border-0', 'rounded-0');
     postsCard.append(ul);
 
-    current.map((post) => {
+    current.map(({ id, text, description, link }) => {
       const li = document.createElement('li');
+      const button = document.createElement('button');
+      const a = document.createElement('a');
+
       li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
       ul.prepend(li);
-      const a = document.createElement('a');
-      (watchedState.ulStateOpend.includes(post.id)) ? a.classList.add('fw-normal') : a.classList.add('fw-bold');
-      a.href = post.link;
-      a.textContent = post.text;
+
+      a.href = link;
+      a.textContent = text;
       a.target = '_blank';
       a.setAttribute('rel', 'noopener noreferrer');
-      a.setAttribute('data-post-id', post.id);
+      a.setAttribute('data-post-id', id);
+      (watchedState.ulStateOpend.includes(id)) ? a.classList.add('fw-normal') : a.classList.add('fw-bold');
       a.addEventListener('click', (e) => {
         watchedState.ulStateOpend.push(e.target.dataset.postId);
         a.classList.remove('fw-bold');
         a.classList.add('fw-normal');
       });
 
-      const button = document.createElement('button');
       button.type = 'button'
       button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
       button.textContent = i18n.t('button');
-      button.setAttribute('data-post-id', post.id)
+      button.setAttribute('data-post-id', id)
       button.addEventListener('click', (e) => {
         watchedState.ulStateOpend.push(e.target.dataset.postId)
         a.classList.remove('fw-bold');
         a.classList.add('fw-normal');
 
-        const modal = new bootstrap.Modal(document.querySelector('#modal'));
+        const modal = new Modal(document.querySelector('#modal'));
         const title = document.querySelector('.modal-title');
-        title.textContent = post.text;
+        title.textContent = text;
         const body = document.querySelector('.modal-body');
-        body.textContent = post.description;
+        body.textContent = description;
         const fullArticle = document.querySelector('.full-article');
-        fullArticle.href = post.link;
+        fullArticle.href = link;
         modal.show();
       })
       li.append(a, button);
@@ -125,6 +127,7 @@ export default (elements, i18n, state) => {
     switch (path) {
       case 'form.status':
         renderStatus(elements, current)
+        renderFeedback(elements, i18n, watchedState)
         break;
       case 'form.error':
         renderFeedback(elements, i18n, watchedState)
