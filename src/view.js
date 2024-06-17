@@ -1,4 +1,5 @@
 import onChange from 'on-change';
+import 'bootstrap';
 
 export default (elements, i18n, state) => {
   console.log(state);
@@ -64,7 +65,6 @@ export default (elements, i18n, state) => {
   };
 
   const renderPosts = (elements, i18n, current) => {
-    console.log(current)
     elements.posts.innerHTML = '';
     const postsCard = document.createElement('div');
     postsCard.classList.add('card', 'border-0');
@@ -79,18 +79,43 @@ export default (elements, i18n, state) => {
     const ul = document.createElement('ul');
     ul.classList.add('list-group', 'border-0', 'rounded-0');
     postsCard.append(ul);
+
     current.map((post) => {
       const li = document.createElement('li');
       li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
       ul.prepend(li);
       const a = document.createElement('a');
-      a.classList.add('fw-bold');
-      a.href = post.link
+      (watchedState.ulStateOpend.includes(post.id)) ? a.classList.add('fw-normal') : a.classList.add('fw-bold');
+      a.href = post.link;
       a.textContent = post.text;
+      a.target = '_blank';
+      a.setAttribute('rel', 'noopener noreferrer');
+      a.setAttribute('data-post-id', post.id);
+      a.addEventListener('click', (e) => {
+        watchedState.ulStateOpend.push(e.target.dataset.postId);
+        a.classList.remove('fw-bold');
+        a.classList.add('fw-normal');
+      });
+
       const button = document.createElement('button');
       button.type = 'button'
       button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
       button.textContent = i18n.t('button');
+      button.setAttribute('data-post-id', post.id)
+      button.addEventListener('click', (e) => {
+        watchedState.ulStateOpend.push(e.target.dataset.postId)
+        a.classList.remove('fw-bold');
+        a.classList.add('fw-normal');
+
+        const modal = new bootstrap.Modal(document.querySelector('#modal'));
+        const title = document.querySelector('.modal-title');
+        title.textContent = post.text;
+        const body = document.querySelector('.modal-body');
+        body.textContent = post.description;
+        const fullArticle = document.querySelector('.full-article');
+        fullArticle.href = post.link;
+        modal.show();
+      })
       li.append(a, button);
     });
   }

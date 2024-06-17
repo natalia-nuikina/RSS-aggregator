@@ -35,6 +35,8 @@ export default () => {
       watchUrl: [],
     },
     feeds: [],
+    posts: [],
+    ulStateOpend: [],
   };
 
   const schema = yup.object({
@@ -68,13 +70,14 @@ export default () => {
           return newPost;
         });
         watchedState.form.status = 'finished';
+        setTimeout(() => getNewPosts(watchedState.feeds), 5000);
       })
       .catch((err) => {
         watchedState.form.error = err.message;
         watchedState.form.status = 'failed';
       })
     });
-    setTimeout(() => getNewPosts(watchedState.feeds), 5000);
+    
   }
 
   const getFeedAndPosts = (url) => {
