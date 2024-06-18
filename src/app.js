@@ -8,7 +8,7 @@ import { makeUrl } from './helpers.js';
 import parser from './parser.js';
 
 export default () => {
-  const defaultLanguage = 'ru'
+  const defaultLanguage = 'ru';
   i18next.init({
     lng: defaultLanguage,
     debug: false,
@@ -46,7 +46,7 @@ export default () => {
   };
 
   const schema = yup.object({
-    website: yup.string().url().notOneOf(state.form.watchUrl)
+    website: yup.string().url().notOneOf(state.form.watchUrl),
   });
 
   const watchedState = watch(elements, i18next, state);
@@ -56,7 +56,7 @@ export default () => {
       axios.get(feed.url)
       .then(response => {
         const document = parser(response.data.contents);
-        const postsArr = Array.from(document.querySelectorAll('item'))
+        const postsArr = Array.from(document.querySelectorAll('item'));
         const newPosts = postsArr.filter((post) => {
           const timeOfPost = post.querySelector('pubDate').textContent;
           if (timeOfPost > feed.lastUpdate) {
@@ -91,7 +91,7 @@ export default () => {
     axios.get(makeUrl(url))
     .then(response => {
       const document = parser(response.data.contents);
-      const postsArr = Array.from(document.querySelectorAll('item'))
+      const postsArr = Array.from(document.querySelectorAll('item'));
       const feed = { 
         id: uniqueId(),
         text: document.querySelector('channel > title').textContent,
