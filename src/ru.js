@@ -12,7 +12,6 @@ export default {
           invalid: 'Ссылка должна быть валидным URL',
           duplicate: 'RSS уже существует',
           invalidRss: 'Ресурс не содержит валидный RSS',
-          /*** empty: 'Не должно быть пустым', ***/ 
           networkError: 'Ошибка сети',
         },
       },
@@ -23,6 +22,6 @@ export default {
         fullArticle: 'Читать полностью',
         buttonClose: 'Закрыть',
       },
-    }
-  }
-}
+    },
+  },
+};

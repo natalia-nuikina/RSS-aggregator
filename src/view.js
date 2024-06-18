@@ -1,7 +1,7 @@
 import onChange from 'on-change';
-import { Modal } from 'bootstrap'
+import { Modal } from 'bootstrap';
 
-export default (elements, i18n, state) => {
+export default (details, i18next, state) => {
   const render = (elements, i18n) => {
     elements.title.textContent = i18n.t('title');
     elements.subtitle.textContent = i18n.t('subtitle');
@@ -10,40 +10,42 @@ export default (elements, i18n, state) => {
     elements.add.textContent = i18n.t('add');
     elements.fullArticle.textContent = i18n.t('modal.fullArticle');
     elements.buttonClose.textContent = i18n.t('modal.buttonClose');
-  }
-  render(elements, i18n);
+  };
+  render(details, i18next);
   const renderValid = (elements, value) => {
     value ? elements.input.classList.remove('is-invalid') : elements.input.classList.add('is-invalid');
   };
 
   const renderFeedback = (elements, i18n, state) => {
-      elements.feedback.classList.add('text-danger')
-      switch (state.form.error) {
-        case 'url':
-          elements.feedback.textContent = i18n.t('feedbacks.errors.invalid');
-          break;
-        case 'duplicate':
-          elements.feedback.textContent =  i18n.t('feedbacks.errors.duplicate');
-          break;
-        case 'invalidRss':
-          elements.feedback.textContent =  i18n.t('feedbacks.errors.invalidRss');
-          break;
-        case 'networkError':
-          elements.feedback.textContent =  i18n.t('feedbacks.errors.networkError');
-          break;
-        default:
-          elements.feedback.textContent = i18n.t('feedbacks.valid');
-          elements.feedback.style.color = 'green';
-          elements.feedback.classList.remove('text-danger');
-          break;
+    elements.feedback.classList.add('text-danger');
+    switch (state.form.error) {
+      case 'url':
+        elements.feedback.textContent = i18n.t('feedbacks.errors.invalid');
+        break;
+      case 'duplicate':
+        elements.feedback.textContent = i18n.t('feedbacks.errors.duplicate');
+        break;
+      case 'invalidRss':
+        elements.feedback.textContent = i18n.t('feedbacks.errors.invalidRss');
+        break;
+      case 'networkError':
+        elements.feedback.textContent = i18n.t('feedbacks.errors.networkError');
+        break;
+      default:
+        elements.feedback.textContent = i18n.t('feedbacks.valid');
+        elements.feedback.style.color = 'green';
+        elements.feedback.classList.remove('text-danger');
+        break;
       }
-    } 
+    };
 
   const renderStatus = (elements, current) => {
     switch (current) {
       case 'finished':
         elements.input.value = '';
         elements.input.focus();
+        break;
+      default:
         break;
     }
   }
@@ -137,20 +139,20 @@ export default (elements, i18n, state) => {
   const watchedState = onChange(state, (path, current) => {
     switch (path) {
       case 'form.status':
-        renderStatus(elements, current)
+        renderStatus(details, current)
         break;
       case 'form.error':
-        renderFeedback(elements, i18n, watchedState)
+        renderFeedback(details, i18next, watchedState)
         break;
       case 'form.valid':
-        renderValid(elements, current)
+        renderValid(details, current)
         break;
       case 'posts':
-        renderPosts(elements, i18n, current)
+        renderPosts(details, i18next, current)
         break;
       case 'feeds':
-        renderFeeds(elements, i18n, current)
-        renderFeedback(elements, i18n, watchedState)
+        renderFeeds(details, i18next, current)
+        renderFeedback(details, i18next, watchedState)
         break;
       default:
         break;

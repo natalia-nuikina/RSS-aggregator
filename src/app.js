@@ -1,10 +1,10 @@
 import * as yup from 'yup';
 import i18next from 'i18next';
 import axios from 'axios';
-import watch from './view.js';
 import { uniqueId } from 'lodash';
+import watch from './view.js';
 import resources from './ru.js';
-import { makeUrl } from './helpers.js';
+import makeUrl from './helpers.js';
 import parser from './parser.js';
 
 export default () => {
@@ -32,7 +32,7 @@ export default () => {
 
   const state = {
     form: {
-      status: 'filling', //sending, finished, failed
+      status: 'filling',
       valid: true,
       error: null,
       field: {
@@ -52,37 +52,39 @@ export default () => {
   const watchedState = watch(elements, i18next, state);
 
   const getNewPosts = (feeds) => {
-    feeds.map((feed) => {
+    feeds.forEach((feed) => {
       axios.get(feed.url)
-      .then(response => {
-        const document = parser(response.data.contents);
-        const postsArr = Array.from(document.querySelectorAll('item'));
-        const newPosts = postsArr.filter((post) => {
-          const timeOfPost = post.querySelector('pubDate').textContent;
-          if (timeOfPost > feed.lastUpdate) {
-            return post;
+        .then((response) => {
+          const document = parser(response.data.contents);
+          const postsArr = Array.from(document.querySelectorAll('item'));
+          const filterPost = (post) => {
+            const timeOfPost = post.querySelector('pubDate').textContent;
+            if (timeOfPost > feed.lastUpdate) {
+              return true;
+            }
+            return false;
           }
-        });
-        newPosts.map((post) => {
-          const newPost = {
-            id: uniqueId(),
-            text: post.querySelector('title').textContent,
-            description: post.querySelector('description').textContent,
-            link: post.querySelector('link').textContent,
-            feedId: feed.id,
-          };
-          watchedState.posts.push(newPost);
-          feed.lastUpdate = post.querySelector('pubDate').textContent;
-          return newPost;
-        });
-        watchedState.form.status = 'finished';
-        setTimeout(() => getNewPosts(watchedState.feeds), 5000);
-      })
-      .catch((err) => {
-        watchedState.form.status = 'failed';
-        watchedState.form.valid = false;
-        watchedState.form.error = (axios.isAxiosError(err)) ? 'networkError' : err.message;
-      })
+          const newPosts = postsArr.filter(filterPost);
+          newPosts.map((post) => {
+            const newPost = {
+              id: uniqueId(),
+              text: post.querySelector('title').textContent,
+              description: post.querySelector('description').textContent,
+              link: post.querySelector('link').textContent,
+              feedId: feed.id,
+            };
+            watchedState.posts.push(newPost);
+            feed.lastUpdate = post.querySelector('pubDate').textContent;
+            return newPost;
+          });
+          watchedState.form.status = 'finished';
+          setTimeout(() => getNewPosts(watchedState.feeds), 5000);
+        })
+        .catch((err) => {
+          watchedState.form.status = 'failed';
+          watchedState.form.valid = false;
+          watchedState.form.error = (axios.isAxiosError(err)) ? 'networkError' : err.message;
+        })
     });
     
   }
