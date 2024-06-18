@@ -114,7 +114,7 @@ export default () => {
       getNewPosts(watchedState.feeds);
     })
     .catch((err) => {
-      watchedState.form.error = err.message;
+      watchedState.form.error = (err.isAxiosError) ? 'networkError' : err.message;
       watchedState.form.valid = false;
       watchedState.form.status = 'failed';
     });
@@ -140,6 +140,7 @@ export default () => {
         }
       })
       .catch((err) => {
+        
         watchedState.form.error = err.type;
         watchedState.form.valid = false;
         watchedState.form.status = 'failed';
