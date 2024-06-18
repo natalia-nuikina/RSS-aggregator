@@ -13,7 +13,11 @@ export default (details, i18next, state) => {
   };
   render(details, i18next);
   const renderValid = (elements, value) => {
-    value ? elements.input.classList.remove('is-invalid') : elements.input.classList.add('is-invalid');
+    if (value) {
+      elements.input.classList.remove('is-invalid');
+    } else {
+      elements.input.classList.add('is-invalid');
+    }
   };
 
   const renderFeedback = (elements, i18n, state) => {
@@ -36,8 +40,8 @@ export default (details, i18next, state) => {
         elements.feedback.style.color = 'green';
         elements.feedback.classList.remove('text-danger');
         break;
-      }
-    };
+    }
+  };
 
   const renderStatus = (elements, current) => {
     switch (current) {
@@ -48,7 +52,7 @@ export default (details, i18next, state) => {
       default:
         break;
     }
-  }
+  };
   const renderFeeds = (elements, i18n, current) => {
     elements.feeds.innerHTML = '';
     const feedsCard = document.createElement('div');
@@ -59,12 +63,12 @@ export default (details, i18next, state) => {
     feedsCard.append(feedsBody);
     const feedsTitle = document.createElement('h2');
     feedsTitle.classList.add('card-title', 'h4');
-    feedsTitle.textContent = i18n.t('feeds')
+    feedsTitle.textContent = i18n.t('feeds');
     feedsBody.append(feedsTitle);
     const ul = document.createElement('ul');
     ul.classList.add('list-group', 'border-0', 'rounded-0');
     feedsCard.append(ul);
-    current.map((feed) => {
+    current.forEach((feed) => {
       const li = document.createElement('li');
       li.classList.add('list-group-item', 'border-0', 'border-end-0');
       ul.append(li);
@@ -94,7 +98,10 @@ export default (details, i18next, state) => {
     ul.classList.add('list-group', 'border-0', 'rounded-0');
     postsCard.append(ul);
 
-    current.map(({ id, text, description, link }) => {
+    current.forEach((post) => {
+      const {
+        id, text, description, link,
+      } = post;
       const li = document.createElement('li');
       const button = document.createElement('button');
       const a = document.createElement('a');
@@ -107,19 +114,23 @@ export default (details, i18next, state) => {
       a.target = '_blank';
       a.setAttribute('rel', 'noopener noreferrer');
       a.setAttribute('data-post-id', id);
-      (watchedState.ulStateOpend.includes(id)) ? a.classList.add('fw-normal') : a.classList.add('fw-bold');
+      if (watchedState.ulStateOpend.includes(id)) {
+        a.classList.add('fw-normal');
+      } else {
+        a.classList.add('fw-bold');
+      } 
       a.addEventListener('click', (e) => {
         watchedState.ulStateOpend.push(e.target.dataset.postId);
         a.classList.remove('fw-bold');
         a.classList.add('fw-normal');
       });
 
-      button.type = 'button'
+      button.type = 'button';
       button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
       button.textContent = i18n.t('button');
-      button.setAttribute('data-post-id', id)
+      button.setAttribute('data-post-id', id);
       button.addEventListener('click', (e) => {
-        watchedState.ulStateOpend.push(e.target.dataset.postId)
+        watchedState.ulStateOpend.push(e.target.dataset.postId);
         a.classList.remove('fw-bold');
         a.classList.add('fw-normal');
 
@@ -131,32 +142,32 @@ export default (details, i18next, state) => {
         const fullArticle = document.querySelector('.full-article');
         fullArticle.href = link;
         modal.show();
-      })
+      });
       li.append(a, button);
     });
-  }
+  };
 
   const watchedState = onChange(state, (path, current) => {
     switch (path) {
       case 'form.status':
-        renderStatus(details, current)
+        renderStatus(details, current);
         break;
       case 'form.error':
-        renderFeedback(details, i18next, watchedState)
+        renderFeedback(details, i18next, watchedState);
         break;
       case 'form.valid':
-        renderValid(details, current)
+        renderValid(details, current);
         break;
       case 'posts':
-        renderPosts(details, i18next, current)
+        renderPosts(details, i18next, current);
         break;
       case 'feeds':
-        renderFeeds(details, i18next, current)
-        renderFeedback(details, i18next, watchedState)
+        renderFeeds(details, i18next, current);
+        renderFeedback(details, i18next, watchedState);
         break;
       default:
         break;
     }
-  })
+  });
   return watchedState;
 };

@@ -63,7 +63,7 @@ export default () => {
               return true;
             }
             return false;
-          }
+          };
           const newPosts = postsArr.filter(filterPost);
           newPosts.map((post) => {
             const newPost = {
@@ -84,43 +84,43 @@ export default () => {
           watchedState.form.status = 'failed';
           watchedState.form.valid = false;
           watchedState.form.error = (axios.isAxiosError(err)) ? 'networkError' : err.message;
-        })
+        });
     });
-    
-  }
+  };
 
   const getFeedAndPosts = (url) => {
     axios.get(makeUrl(url))
-    .then(response => {
-      const document = parser(response.data.contents);
-      const postsArr = Array.from(document.querySelectorAll('item'));
-      const feed = { 
-        id: uniqueId(),
-        text: document.querySelector('channel > title').textContent,
-        description: document.querySelector('channel > description').textContent,
-        url: makeUrl(url),
-        lastUpdate: postsArr[0].querySelector('pubDate').textContent,
-      };
-      const posts = postsArr.reverse().map((post) => {
-        return {
+      .then((response) => {
+        const document = parser(response.data.contents);
+        const postsArr = Array.from(document.querySelectorAll('item'));
+        const feed = {
           id: uniqueId(),
-          text: post.querySelector('title').textContent,
-          description: post.querySelector('description').textContent,
-          link: post.querySelector('link').textContent,
-          feedId: feed.id,
+          text: document.querySelector('channel > title').textContent,
+          description: document.querySelector('channel > description').textContent,
+          url: makeUrl(url),
+          lastUpdate: postsArr[0].querySelector('pubDate').textContent,
         };
+        const posts = postsArr.reverse().map((post) => {
+          const id = uniqueId();
+          return {
+            id,
+            text: post.querySelector('title').textContent,
+            description: post.querySelector('description').textContent,
+            link: post.querySelector('link').textContent,
+            feedId: feed.id,
+          };
+        });
+        watchedState.form.status = 'finished';
+        watchedState.feeds.push(feed);
+        watchedState.posts = posts;
+        getNewPosts(watchedState.feeds);
+      })
+      .catch((err) => {
+        watchedState.form.error = (err.isAxiosError) ? 'networkError' : err.message;
+        watchedState.form.valid = false;
+        watchedState.form.status = 'failed';
       });
-      watchedState.form.status = 'finished';
-      watchedState.feeds.push(feed);
-      watchedState.posts = posts;
-      getNewPosts(watchedState.feeds);
-    })
-    .catch((err) => {
-      watchedState.form.error = (err.isAxiosError) ? 'networkError' : err.message;
-      watchedState.form.valid = false;
-      watchedState.form.status = 'failed';
-    });
-  }
+  };
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -142,11 +142,10 @@ export default () => {
         }
       })
       .catch((err) => {
-        
         watchedState.form.error = err.type;
         watchedState.form.valid = false;
         watchedState.form.status = 'failed';
-      })
+      });
     watch(elements, i18next, watchedState);
   });
 };
