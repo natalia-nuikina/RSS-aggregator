@@ -20,9 +20,9 @@ export default (details, i18next, state) => {
     }
   };
 
-  const renderFeedback = (elements, i18n, state) => {
+  const renderFeedback = (elements, i18n, watchedState) => {
     elements.feedback.classList.add('text-danger');
-    switch (state.form.error) {
+    switch (watchedState.form.error) {
       case 'url':
         elements.feedback.textContent = i18n.t('feedbacks.errors.invalid');
         break;
@@ -82,7 +82,7 @@ export default (details, i18next, state) => {
     });
   };
 
-  const renderPosts = (elements, i18n, current) => {
+  const renderPosts = (elements, i18n, current, watchedState) => {
     elements.posts.innerHTML = '';
     const postsCard = document.createElement('div');
     postsCard.classList.add('card', 'border-0');
@@ -118,7 +118,7 @@ export default (details, i18next, state) => {
         a.classList.add('fw-normal');
       } else {
         a.classList.add('fw-bold');
-      } 
+      }
       a.addEventListener('click', (e) => {
         watchedState.ulStateOpend.push(e.target.dataset.postId);
         a.classList.remove('fw-bold');
@@ -159,7 +159,7 @@ export default (details, i18next, state) => {
         renderValid(details, current);
         break;
       case 'posts':
-        renderPosts(details, i18next, current);
+        renderPosts(details, i18next, current, watchedState);
         break;
       case 'feeds':
         renderFeeds(details, i18next, current);
