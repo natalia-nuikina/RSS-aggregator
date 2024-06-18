@@ -48,6 +48,13 @@ export default (details, i18next, state) => {
       case 'finished':
         elements.input.value = '';
         elements.input.focus();
+        elements.add.removeAttribute('disabled');
+        break;
+      case 'sending':
+        elements.add.setAttribute('disabled', true);
+        break;
+      case 'failed':
+        elements.add.setAttribute('disabled', true);
         break;
       default:
         break;
