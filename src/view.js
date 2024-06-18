@@ -2,7 +2,16 @@ import onChange from 'on-change';
 import { Modal } from 'bootstrap'
 
 export default (elements, i18n, state) => {
-  console.log(state);
+  const render = (elements, i18n) => {
+    elements.title.textContent = i18n.t('title');
+    elements.subtitle.textContent = i18n.t('subtitle');
+    elements.label.textContent = i18n.t('label');
+    elements.example.textContent = i18n.t('example');
+    elements.add.textContent = i18n.t('add');
+    elements.fullArticle.textContent = i18n.t('modal.fullArticle');
+    elements.buttonClose.textContent = i18n.t('modal.buttonClose');
+  }
+  render(elements, i18n);
   const renderValid = (elements, value) => {
     value ? elements.input.classList.remove('is-invalid') : elements.input.classList.add('is-invalid');
   };
@@ -18,6 +27,9 @@ export default (elements, i18n, state) => {
           break;
         case 'invalidRss':
           elements.feedback.textContent =  i18n.t('feedbacks.errors.invalidRss');
+          break;
+        case 'networkError':
+          elements.feedback.textContent =  i18n.t('feedbacks.errors.networkError');
           break;
         default:
           elements.feedback.textContent = i18n.t('feedbacks.valid');
@@ -123,11 +135,9 @@ export default (elements, i18n, state) => {
   }
 
   const watchedState = onChange(state, (path, current) => {
-    console.log(path)
     switch (path) {
       case 'form.status':
         renderStatus(elements, current)
-        renderFeedback(elements, i18n, watchedState)
         break;
       case 'form.error':
         renderFeedback(elements, i18n, watchedState)
@@ -135,14 +145,12 @@ export default (elements, i18n, state) => {
       case 'form.valid':
         renderValid(elements, current)
         break;
-      case 'form.field.website':
-        // console.log(path);
-        break;
       case 'posts':
         renderPosts(elements, i18n, current)
         break;
       case 'feeds':
         renderFeeds(elements, i18n, current)
+        renderFeedback(elements, i18n, watchedState)
         break;
       default:
         break;

@@ -7,16 +7,22 @@ import resources from './ru.js';
 import { makeUrl } from './helpers.js';
 import parser from './parser.js';
 
-
-
 export default () => {
+  const defaultLanguage = 'ru'
   i18next.init({
-    lng: 'ru',
+    lng: defaultLanguage,
     debug: false,
     resources,
   });
 
   const elements = {
+    title: document.querySelector('h1'),
+    subtitle: document.querySelector('.lead'),
+    label: document.querySelector('[for="url-input"]'),
+    add: document.querySelector('[type="submit"]'),
+    example: document.querySelector('.example'),
+    fullArticle: document.querySelector('.full-article'),
+    buttonClose: document.querySelector('.btn-secondary'),
     form: document.querySelector('form'),
     input: document.querySelector('input'),
     feedback: document.querySelector('.feedback'),
@@ -73,8 +79,9 @@ export default () => {
         setTimeout(() => getNewPosts(watchedState.feeds), 5000);
       })
       .catch((err) => {
-        watchedState.form.error = err.message;
         watchedState.form.status = 'failed';
+        watchedState.form.valid = false;
+        watchedState.form.error = (axios.isAxiosError(err)) ? 'networkError' : err.message;
       })
     });
     
@@ -108,6 +115,7 @@ export default () => {
     })
     .catch((err) => {
       watchedState.form.error = err.message;
+      watchedState.form.valid = false;
       watchedState.form.status = 'failed';
     });
   }
@@ -119,25 +127,23 @@ export default () => {
     const url = formData.get('url');
     watchedState.form.field.website = url;
     schema.validate(state.form.field)
-    .then(() => {
-      watchedState.form.valid = true;
-      
-      watchedState.form.error = null;
-      if (state.form.watchUrl.includes(url)) {
-        watchedState.form.error = 'duplicate';
+      .then(() => {
+        watchedState.form.valid = true;
+        watchedState.form.error = null;
+        if (state.form.watchUrl.includes(url)) {
+          watchedState.form.error = 'duplicate';
+          watchedState.form.valid = false;
+          watchedState.form.status = 'failed';
+        } else {
+          getFeedAndPosts(url);
+          watchedState.form.watchUrl.push(url);
+        }
+      })
+      .catch((err) => {
+        watchedState.form.error = err.type;
         watchedState.form.valid = false;
         watchedState.form.status = 'failed';
-      } else {
-        watchedState.form.watchUrl.push(url);
-        getFeedAndPosts(url);
-      }
-    })
-    .catch ((err) => {
-      watchedState.form.error = err.type;
-      watchedState.form.valid = false;
-      watchedState.form.status = 'failed';
-    })
+      })
     watch(elements, i18next, watchedState);
   });
-
 };
