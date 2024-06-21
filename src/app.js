@@ -86,7 +86,7 @@ export default () => {
         const [feed, posts] = parser(response.data.contents);
         feed.url = makeUrl(url);
         feed.lastUpdate = posts[posts.length - 1].timeOfPost;
-        feed.id = uniqueId(),
+        feed.id = uniqueId();
         posts.forEach((post) => {
           post.id = uniqueId();
           post.feedId = feed.id;
@@ -108,7 +108,7 @@ export default () => {
     watchedState.form.status = 'sending';
     const formData = new FormData(elements.form);
     const url = formData.get('url');
-    schema.validate({website: url})
+    schema.validate({ website: url })
       .then(() => {
         watchedState.form.valid = true;
         watchedState.form.error = null;

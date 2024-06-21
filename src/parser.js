@@ -12,8 +12,9 @@ export default (flow) => {
       description: doc.querySelector('channel > description').textContent,
     };
     const posts = postsArr.reverse().map((post) => {
+      const title = post.querySelector('title')
       return {
-        text: post.querySelector('title').textContent,
+        text: title.textContent,
         description: post.querySelector('description').textContent,
         link: post.querySelector('link').textContent,
         timeOfPost: post.querySelector('pubDate').textContent,

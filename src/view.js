@@ -155,9 +155,6 @@ export default (details, i18next, state) => {
   };
 
   const watchedState = onChange(state, (path, current) => {
-    console.log(path)
-    console.log(current)
-
     switch (path) {
       case 'form.status':
         renderStatus(details, current);
