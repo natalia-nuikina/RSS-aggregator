@@ -54,7 +54,7 @@ export default (details, i18next, state) => {
         elements.add.setAttribute('disabled', true);
         break;
       case 'failed':
-        elements.add.setAttribute('disabled', true);
+        elements.add.removeAttribute('disabled');
         break;
       default:
         break;
@@ -121,13 +121,13 @@ export default (details, i18next, state) => {
       a.target = '_blank';
       a.setAttribute('rel', 'noopener noreferrer');
       a.setAttribute('data-post-id', id);
-      if (watchedState.ulStateOpend.includes(id)) {
+      if (watchedState.ulStateOpened.includes(id)) {
         a.classList.add('fw-normal');
       } else {
         a.classList.add('fw-bold');
       }
       a.addEventListener('click', (e) => {
-        watchedState.ulStateOpend.push(e.target.dataset.postId);
+        watchedState.ulStateOpened.push(e.target.dataset.postId);
         a.classList.remove('fw-bold');
         a.classList.add('fw-normal');
       });
@@ -137,7 +137,7 @@ export default (details, i18next, state) => {
       button.textContent = i18n.t('button');
       button.setAttribute('data-post-id', id);
       button.addEventListener('click', (e) => {
-        watchedState.ulStateOpend.push(e.target.dataset.postId);
+        watchedState.ulStateOpened.push(e.target.dataset.postId);
         a.classList.remove('fw-bold');
         a.classList.add('fw-normal');
 
@@ -155,6 +155,9 @@ export default (details, i18next, state) => {
   };
 
   const watchedState = onChange(state, (path, current) => {
+    console.log(path)
+    console.log(current)
+
     switch (path) {
       case 'form.status':
         renderStatus(details, current);

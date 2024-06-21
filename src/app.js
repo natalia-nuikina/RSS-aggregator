@@ -3,7 +3,7 @@ import i18next from 'i18next';
 import axios from 'axios';
 import { uniqueId } from 'lodash';
 import watch from './view.js';
-import resources from './ru.js';
+import resources from './languages/ru.js';
 import makeUrl from './helpers.js';
 import parser from './parser.js';
 
@@ -35,14 +35,11 @@ export default () => {
       status: 'filling',
       valid: true,
       error: null,
-      field: {
-        website: '',
-      },
       watchUrl: [],
     },
     feeds: [],
     posts: [],
-    ulStateOpend: [],
+    ulStateOpened: [],
   };
 
   const schema = yup.object({
@@ -55,27 +52,22 @@ export default () => {
     feeds.forEach((feed) => {
       axios.get(feed.url)
         .then((response) => {
-          const document = parser(response.data.contents);
-          const postsArr = Array.from(document.querySelectorAll('item'));
+          const [, posts] = parser(response.data.contents);
           const filterPost = (post) => {
-            const timeOfPost = post.querySelector('pubDate').textContent;
-            if (timeOfPost > feed.lastUpdate) {
+            if (post.timeOfPost > feed.lastUpdate) {
               return true;
             }
             return false;
           };
-          const newPosts = postsArr.filter(filterPost);
+
+          const newPosts = posts.filter(filterPost);
+
           newPosts.map((post) => {
-            const newPost = {
-              id: uniqueId(),
-              text: post.querySelector('title').textContent,
-              description: post.querySelector('description').textContent,
-              link: post.querySelector('link').textContent,
-              feedId: feed.id,
-            };
-            watchedState.posts.push(newPost);
-            feed.lastUpdate = post.querySelector('pubDate').textContent;
-            return newPost;
+            post.id = uniqueId();
+            post.feedId = feed.id;
+            watchedState.posts.push(post);
+            feed.lastUpdate = post.timeOfPost;
+            return post;
           });
           watchedState.form.status = 'finished';
           setTimeout(() => getNewPosts(watchedState.feeds), 5000);
@@ -91,24 +83,13 @@ export default () => {
   const getFeedAndPosts = (url) => {
     axios.get(makeUrl(url))
       .then((response) => {
-        const document = parser(response.data.contents);
-        const postsArr = Array.from(document.querySelectorAll('item'));
-        const feed = {
-          id: uniqueId(),
-          text: document.querySelector('channel > title').textContent,
-          description: document.querySelector('channel > description').textContent,
-          url: makeUrl(url),
-          lastUpdate: postsArr[0].querySelector('pubDate').textContent,
-        };
-        const posts = postsArr.reverse().map((post) => {
-          const id = uniqueId();
-          return {
-            id,
-            text: post.querySelector('title').textContent,
-            description: post.querySelector('description').textContent,
-            link: post.querySelector('link').textContent,
-            feedId: feed.id,
-          };
+        const [feed, posts] = parser(response.data.contents);
+        feed.url = makeUrl(url);
+        feed.lastUpdate = posts[posts.length - 1].timeOfPost;
+        feed.id = uniqueId(),
+        posts.forEach((post) => {
+          post.id = uniqueId();
+          post.feedId = feed.id;
         });
         watchedState.form.status = 'finished';
         watchedState.feeds.push(feed);
@@ -127,8 +108,7 @@ export default () => {
     watchedState.form.status = 'sending';
     const formData = new FormData(elements.form);
     const url = formData.get('url');
-    watchedState.form.field.website = url;
-    schema.validate(state.form.field)
+    schema.validate({website: url})
       .then(() => {
         watchedState.form.valid = true;
         watchedState.form.error = null;

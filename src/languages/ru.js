@@ -6,6 +6,9 @@ export default {
       label: 'Ссылка RSS',
       example: 'Пример: https://lorem-rss.hexlet.app/feed',
       add: 'Добавить',
+      feeds: 'Фиды',
+      posts: 'Посты',
+      button: 'Просмотр',
       feedbacks: {
         valid: 'RSS успешно загружен',
         errors: {
@@ -15,9 +18,6 @@ export default {
           networkError: 'Ошибка сети',
         },
       },
-      feeds: 'Фиды',
-      posts: 'Посты',
-      button: 'Просмотр',
       modal: {
         fullArticle: 'Читать полностью',
         buttonClose: 'Закрыть',
