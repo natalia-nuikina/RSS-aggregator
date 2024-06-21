@@ -13,7 +13,7 @@ export default {
         valid: 'RSS успешно загружен',
         errors: {
           invalid: 'Ссылка должна быть валидным URL',
-          duplicate: 'RSS уже существует',
+          notOneOf: 'RSS уже существует',
           invalidRss: 'Ресурс не содержит валидный RSS',
           networkError: 'Ошибка сети',
         },

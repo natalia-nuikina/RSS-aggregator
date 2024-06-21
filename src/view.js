@@ -7,8 +7,8 @@ const renderFeedback = (elements, i18n, watchedState) => {
     case 'url':
       elements.feedback.textContent = i18n.t('feedbacks.errors.invalid');
       break;
-    case 'duplicate':
-      elements.feedback.textContent = i18n.t('feedbacks.errors.duplicate');
+    case 'notOneOf':
+      elements.feedback.textContent = i18n.t('feedbacks.errors.notOneOf');
       break;
     case 'invalidRss':
       elements.feedback.textContent = i18n.t('feedbacks.errors.invalidRss');

@@ -39,9 +39,7 @@ const state = {
 };
 
 export default () => {
-  const schema = yup.object({
-    website: yup.string().url().notOneOf(state.form.watchUrl),
-  });
+
 
   const defaultLanguage = 'ru';
   i18next.init({
@@ -112,18 +110,15 @@ export default () => {
       watchedState.form.status = 'sending';
       const formData = new FormData(elements.form);
       const url = formData.get('url');
+      const schema = yup.object({
+        website: yup.string().url().notOneOf(watchedState.form.watchUrl),
+      });
       schema.validate({ website: url })
         .then(() => {
           watchedState.form.valid = true;
           watchedState.form.error = null;
-          if (state.form.watchUrl.includes(url)) {
-            watchedState.form.error = 'duplicate';
-            watchedState.form.valid = false;
-            watchedState.form.status = 'failed';
-          } else {
-            getFeedAndPosts(url);
-            watchedState.form.watchUrl.push(url);
-          }
+          getFeedAndPosts(url);
+          watchedState.form.watchUrl.push(url);
         })
         .catch((err) => {
           watchedState.form.error = err.type;
