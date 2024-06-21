@@ -138,23 +138,23 @@ export default (details, i18next, state) => {
       const button = e.target.closest('button');
       const a = e.target.closest('a');
 
-        if (button) {
-          watchedState.ulStateOpened.push(button.dataset.postId);
-          const [targetPost] = watchedState.posts.filter((post) => post.id === button.dataset.postId);
-          const targetA = document.querySelector(`a[data-post-id="${button.dataset.postId}"]`);
-          targetA.classList.remove('fw-bold');
-          targetA.classList.add('fw-normal');
-  
-          const modal = new Modal(elements.modal);
-          elements.modalTitle.textContent = targetPost.text;
-          elements.modalBody.textContent = targetPost.description;
-          elements.modalArticle.href = targetPost.link;
-          modal.show();
-        } else if (a) {
-          watchedState.ulStateOpened.push(a.dataset.postId);
-          a.classList.remove('fw-bold');
-          a.classList.add('fw-normal');
-        }
+      if (button) {
+        watchedState.ulStateOpened.push(button.dataset.postId);
+        const [targetPost] = watchedState.posts.filter((post) => post.id === button.dataset.postId);
+        const targetA = document.querySelector(`a[data-post-id="${button.dataset.postId}"]`);
+        targetA.classList.remove('fw-bold');
+        targetA.classList.add('fw-normal');
+
+        const modal = new Modal(elements.modal);
+        elements.modalTitle.textContent = targetPost.text;
+        elements.modalBody.textContent = targetPost.description;
+        elements.modalArticle.href = targetPost.link;
+        modal.show();
+      } else if (a) {
+        watchedState.ulStateOpened.push(a.dataset.postId);
+        a.classList.remove('fw-bold');
+        a.classList.add('fw-normal');
+      }
     });
   };
 
