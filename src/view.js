@@ -12,8 +12,8 @@ export default (details, i18next, state) => {
     elements.buttonClose.textContent = i18n.t('modal.buttonClose');
   };
   render(details, i18next);
-  const renderValid = (elements, value) => {
-    if (value) {
+  const renderValid = (elements, watchedState) => {
+    if (watchedState.form.valid) {
       elements.input.classList.remove('is-invalid');
     } else {
       elements.input.classList.add('is-invalid');
@@ -43,8 +43,8 @@ export default (details, i18next, state) => {
     }
   };
 
-  const renderStatus = (elements, current) => {
-    switch (current) {
+  const renderStatus = (elements, watchedState) => {
+    switch (watchedState.form.status) {
       case 'finished':
         elements.input.value = '';
         elements.input.focus();
@@ -60,7 +60,7 @@ export default (details, i18next, state) => {
         break;
     }
   };
-  const renderFeeds = (elements, i18n, current) => {
+  const renderFeeds = (elements, i18n, watchedState) => {
     elements.feeds.innerHTML = '';
     const feedsCard = document.createElement('div');
     feedsCard.classList.add('card', 'border-0');
@@ -75,7 +75,7 @@ export default (details, i18next, state) => {
     const ul = document.createElement('ul');
     ul.classList.add('list-group', 'border-0', 'rounded-0');
     feedsCard.append(ul);
-    current.forEach((feed) => {
+    watchedState.feeds.forEach((feed) => {
       const li = document.createElement('li');
       li.classList.add('list-group-item', 'border-0', 'border-end-0');
       ul.append(li);
@@ -89,7 +89,7 @@ export default (details, i18next, state) => {
     });
   };
 
-  const renderPosts = (elements, i18n, current, watchedState) => {
+  const renderPosts = (elements, i18n, watchedState) => {
     elements.posts.innerHTML = '';
     const postsCard = document.createElement('div');
     postsCard.classList.add('card', 'border-0');
@@ -105,9 +105,9 @@ export default (details, i18next, state) => {
     ul.classList.add('list-group', 'border-0', 'rounded-0');
     postsCard.append(ul);
 
-    current.forEach((post) => {
+    watchedState.posts.forEach((post) => {
       const {
-        id, text, description, link,
+        id, text, link,
       } = post;
       const li = document.createElement('li');
       const button = document.createElement('button');
@@ -126,50 +126,54 @@ export default (details, i18next, state) => {
       } else {
         a.classList.add('fw-bold');
       }
-      a.addEventListener('click', (e) => {
-        watchedState.ulStateOpened.push(e.target.dataset.postId);
-        a.classList.remove('fw-bold');
-        a.classList.add('fw-normal');
-      });
 
       button.type = 'button';
       button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
       button.textContent = i18n.t('button');
       button.setAttribute('data-post-id', id);
-      button.addEventListener('click', (e) => {
-        watchedState.ulStateOpened.push(e.target.dataset.postId);
-        a.classList.remove('fw-bold');
-        a.classList.add('fw-normal');
-
-        const modal = new Modal(document.querySelector('#modal'));
-        const title = document.querySelector('.modal-title');
-        title.textContent = text;
-        const body = document.querySelector('.modal-body');
-        body.textContent = description;
-        const fullArticle = document.querySelector('.full-article');
-        fullArticle.href = link;
-        modal.show();
-      });
       li.append(a, button);
+    });
+
+    ul.addEventListener('click', (e) => {
+      const button = e.target.closest('button');
+      const a = e.target.closest('a');
+
+        if (button) {
+          watchedState.ulStateOpened.push(button.dataset.postId);
+          const [targetPost] = watchedState.posts.filter((post) => post.id === button.dataset.postId);
+          const targetA = document.querySelector(`a[data-post-id="${button.dataset.postId}"]`);
+          targetA.classList.remove('fw-bold');
+          targetA.classList.add('fw-normal');
+  
+          const modal = new Modal(elements.modal);
+          elements.modalTitle.textContent = targetPost.text;
+          elements.modalBody.textContent = targetPost.description;
+          elements.modalArticle.href = targetPost.link;
+          modal.show();
+        } else if (a) {
+          watchedState.ulStateOpened.push(a.dataset.postId);
+          a.classList.remove('fw-bold');
+          a.classList.add('fw-normal');
+        }
     });
   };
 
-  const watchedState = onChange(state, (path, current) => {
+  const watchedState = onChange(state, (path) => {
     switch (path) {
       case 'form.status':
-        renderStatus(details, current);
+        renderStatus(details, watchedState);
         break;
       case 'form.error':
         renderFeedback(details, i18next, watchedState);
         break;
       case 'form.valid':
-        renderValid(details, current);
+        renderValid(details, watchedState);
         break;
       case 'posts':
-        renderPosts(details, i18next, current, watchedState);
+        renderPosts(details, i18next, watchedState);
         break;
       case 'feeds':
-        renderFeeds(details, i18next, current);
+        renderFeeds(details, i18next, watchedState);
         renderFeedback(details, i18next, watchedState);
         break;
       default:

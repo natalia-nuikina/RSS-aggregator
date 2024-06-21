@@ -28,6 +28,10 @@ export default () => {
     feedback: document.querySelector('.feedback'),
     feeds: document.querySelector('.feeds'),
     posts: document.querySelector('.posts'),
+    modal: document.querySelector('#modal'),
+    modalTitle: document.querySelector('.modal-title'),
+    modalBody: document.querySelector('.modal-body'),
+    modalArticle: document.querySelector('.full-article'),
   };
 
   const state = {
