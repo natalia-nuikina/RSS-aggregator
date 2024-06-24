@@ -1,31 +1,39 @@
 import globals from 'globals';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';
+import importPlugin from 'eslint-plugin-import';
 
-const filename = fileURLToPath(import.meta.url);
-const dirname = path.dirname(filename);
 const compat = new FlatCompat({
-  baseDirectory: dirname,
   recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
 });
 
-export default [...compat.extends('airbnb-base'), {
-  languageOptions: {
-    globals: {
-      ...globals.browser,
+export default [
+  {
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
     },
-
-    ecmaVersion: 'latest',
-    sourceType: 'script',
+    plugins: { import: importPlugin },
+    rules: {
+      ...importPlugin.configs.recommended.rules,
+    },
   },
-
-  rules: {
-    'import/extensions': 0,
-    'import/no-unresolved': 0,
-    'no-param-reassign': 0,
-    'no-console': 0,
+  ...compat.extends('airbnb-base'),
+  {
+    rules: {
+      'import/extensions': 0,
+      'import/no-unresolved': 0,
+      'no-param-reassign': 'off',
+      'no-console': 0,
+      'import/no-named-as-default': 'off',
+      'import/no-named-as-default-member': 'off',
+      'import/no-extraneous-dependencies': 'off',
+      'no-undef': 'off',
+    },
   },
-}];
+];
