@@ -111,10 +111,6 @@ const renderPosts = (elements, i18n, watchedState) => {
     if (button) {
       watchedState.ulStateOpened.push(button.dataset.postId);
       const [targetPost] = watchedState.posts.filter((post) => post.id === button.dataset.postId);
-      const targetA = document.querySelector(`a[data-post-id="${button.dataset.postId}"]`);
-      targetA.classList.remove('fw-bold');
-      targetA.classList.add('fw-normal');
-
       const modal = new Modal(elements.modal);
       elements.modalTitle.textContent = targetPost.text;
       elements.modalBody.textContent = targetPost.description;
@@ -148,6 +144,7 @@ export default (details, i18next, state) => {
   };
 
   const watchedState = onChange(state, (path) => {
+    console.log(path);
     switch (path) {
       case 'lng':
         render(details, i18next);
@@ -162,6 +159,9 @@ export default (details, i18next, state) => {
         renderValid(details, watchedState);
         break;
       case 'posts':
+        renderPosts(details, i18next, watchedState);
+        break;
+      case 'ulStateOpened':
         renderPosts(details, i18next, watchedState);
         break;
       case 'feeds':
