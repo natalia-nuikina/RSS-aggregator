@@ -47,6 +47,7 @@ export default () => {
   })
     .then(() => {
       const watchedState = watch(elements, i18next, state);
+      watchedState.lng = 'ru';
 
       const getNewPosts = (feeds) => {
         feeds.forEach((feed) => {
@@ -108,6 +109,14 @@ export default () => {
         watchedState.form.status = 'sending';
         const formData = new FormData(elements.form);
         const url = formData.get('url');
+        yup.setLocale({
+          string: {
+            url: () => ({ key: 'invalid' }),
+          },
+          mixed: {
+            notOneOf: () => ({ key: 'notOneOf' }),
+          },
+        });
         const schema = yup.object({
           website: yup.string().url().notOneOf(watchedState.form.watchUrl),
         });
@@ -119,7 +128,7 @@ export default () => {
             watchedState.form.watchUrl.push(url);
           })
           .catch((err) => {
-            watchedState.form.error = err.type;
+            watchedState.form.error = err.message.key;
             watchedState.form.valid = false;
             watchedState.form.status = 'failed';
           });

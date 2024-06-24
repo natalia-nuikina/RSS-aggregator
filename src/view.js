@@ -3,24 +3,13 @@ import { Modal } from 'bootstrap';
 
 const renderFeedback = (elements, i18n, watchedState) => {
   elements.feedback.classList.add('text-danger');
-  switch (watchedState.form.error) {
-    case 'url':
-      elements.feedback.textContent = i18n.t('feedbacks.errors.invalid');
-      break;
-    case 'notOneOf':
-      elements.feedback.textContent = i18n.t('feedbacks.errors.notOneOf');
-      break;
-    case 'invalidRss':
-      elements.feedback.textContent = i18n.t('feedbacks.errors.invalidRss');
-      break;
-    case 'networkError':
-      elements.feedback.textContent = i18n.t('feedbacks.errors.networkError');
-      break;
-    default:
-      elements.feedback.textContent = i18n.t('feedbacks.valid');
-      elements.feedback.style.color = 'green';
-      elements.feedback.classList.remove('text-danger');
-      break;
+  const error = watchedState.form.error;
+  if (error) {
+    elements.feedback.textContent = i18n.t(`feedbacks.errors.${error}`);
+  } else {
+    elements.feedback.textContent = i18n.t('feedbacks.valid');
+    elements.feedback.style.color = 'green';
+    elements.feedback.classList.remove('text-danger');
   }
 };
 
@@ -139,17 +128,17 @@ const renderPosts = (elements, i18n, watchedState) => {
   });
 };
 
+const render = (elements, i18n) => {
+  elements.title.textContent = i18n.t('title');
+  elements.subtitle.textContent = i18n.t('subtitle');
+  elements.label.textContent = i18n.t('label');
+  elements.example.textContent = i18n.t('example');
+  elements.add.textContent = i18n.t('add');
+  elements.fullArticle.textContent = i18n.t('modal.fullArticle');
+  elements.buttonClose.textContent = i18n.t('modal.buttonClose');
+};
+
 export default (details, i18next, state) => {
-  const render = (elements, i18n) => {
-    elements.title.textContent = i18n.t('title');
-    elements.subtitle.textContent = i18n.t('subtitle');
-    elements.label.textContent = i18n.t('label');
-    elements.example.textContent = i18n.t('example');
-    elements.add.textContent = i18n.t('add');
-    elements.fullArticle.textContent = i18n.t('modal.fullArticle');
-    elements.buttonClose.textContent = i18n.t('modal.buttonClose');
-  };
-  render(details, i18next);
   const renderValid = (elements, watchedState) => {
     if (watchedState.form.valid) {
       elements.input.classList.remove('is-invalid');
@@ -160,6 +149,9 @@ export default (details, i18next, state) => {
 
   const watchedState = onChange(state, (path) => {
     switch (path) {
+      case 'lng':
+        render(details, i18next);
+        break;
       case 'form.status':
         renderStatus(details, watchedState);
         break;
