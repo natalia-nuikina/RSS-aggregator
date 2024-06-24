@@ -3,7 +3,7 @@ import { Modal } from 'bootstrap';
 
 const renderFeedback = (elements, i18n, watchedState) => {
   elements.feedback.classList.add('text-danger');
-  const error = watchedState.form.error;
+  const { error } = watchedState.form;
   if (error) {
     elements.feedback.textContent = i18n.t(`feedbacks.errors.${error}`);
   } else {
