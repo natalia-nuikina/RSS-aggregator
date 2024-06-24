@@ -54,13 +54,7 @@ export default () => {
           axios.get(feed.url)
             .then((response) => {
               const [, posts] = parser(response.data.contents);
-              const filterPost = (post) => {
-                if (post.timeOfPost > feed.lastUpdate) {
-                  return true;
-                }
-                return false;
-              };
-
+              const filterPost = (post) => post.timeOfPost > feed.lastUpdate;
               const newPosts = posts.filter(filterPost);
 
               newPosts.map((post) => {
